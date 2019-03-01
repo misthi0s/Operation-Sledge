@@ -24,7 +24,7 @@ There are a number of options that can be passed to the script.
  * -d or --download - This option downloads all files found in the anonymous FTP server's directory to the local system
  * -t or --threads <THREADS> - This option specifies how many threads to concurrently scan with (default: 10)
  
-If one or more of these options are missing, they will be prompted for as they would if you were running the script in interactive mode.
+Any of the above required fields will be prompted for as if in running in interactive mode if not provided via the command line.
 
 Examples
 --------
