@@ -147,17 +147,17 @@ if __name__ == "__main__":
 	# Argument parsing commands
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', '--ip', help='IP range to scan (CIDR Notation)')
+	parser.add_argument('-l', '--list', help='File containing IP addresses to scan')
 	parser.add_argument('-d', '--download', help='If anonymous access allowed, download all files on FTP share', action='store_true')
 	parser.add_argument('-t', '--threads', help='Number of threads to scan from (Default: 10)')
 	args = parser.parse_args()
 
 	# Ask for CIDR network range if not passed via argument, then verify proper CIDR notation
-	if args.ip is None:
+	if args.ip is None and args.list is None:
 		ipRange = input('Please enter IP range to scan (CIDR notation): ')
 		verRange = cidr_verify(ipRange)
 	else:
-		ipRange = args.ip
-		verRange = cidr_verify(ipRange)
+		verRange = None
 
 	# Set number of threads to scan with if passed via argument, otherwise default to 10
 	if args.threads:
@@ -166,16 +166,28 @@ if __name__ == "__main__":
 		num_threads = 10
 
 	# Check to see if files should be downloaded
-	download_status = args.download
+		download_status = args.download
 
-	# Configure CIDR notated string to IPNetwork
-	ip = IPNetwork(verRange)
+	# Load IP list from file if specified
+	if args.list:
+		infile = open(args.list)
+		ip = infile.read().splitlines()
+		infile.close()
+	else:
+		ipRange = args.ip
+		verRange = cidr_verify(ipRange)
+
+		# Configure CIDR notated string to IPNetwork
+		ip = IPNetwork(verRange)
 
 	# Set up multithreading pools
 	freeze_support()
 	pool = Pool(processes=int(num_threads))
 
-	print('Breaching {} IP range with {} threads...\n'.format(verRange, num_threads))
+	if verRange is not None:
+		print('Breaching {} IP range with {} threads...\n'.format(verRange, num_threads))
+	else:
+		print('Breaching {} IPs with {} threads...\n'.format(len(ip), num_threads))
 
 	# Multithread FTP connections and display progress bar
 	for addr in tqdm(pool.imap_unordered(execute_scan, ip), total=len(ip), ascii=True, desc='Progress: ',

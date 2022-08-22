@@ -21,6 +21,7 @@ Automated Mode
 There are a number of options that can be passed to the script.
 
  * -i or --ip <CIDR NETWORK> - This option specifies the CIDR-notated network to scan
+ * -l or --list - This option specifies a file to load the list of targets from
  * -d or --download - This option downloads all files found in the anonymous FTP server's directory to the local system
  * -t or --threads <THREADS> - This option specifies how many threads to concurrently scan with (default: 10)
  
@@ -39,6 +40,10 @@ Examples
 `python3 sledge.py -i 192.168.1.123/32 -d`
  
  * The above will scan the host 192.168.1.123 and download all files found if anonymous FTP is enabled
+
+ `python3 sledge,py -l ips.txt`
+ 
+ * The above will scan all IP addresses in the file `ips.txt` (one IP per line)
  
 Licensing
 ---------
